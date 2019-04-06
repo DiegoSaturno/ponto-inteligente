@@ -1,0 +1,49 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.20.RELEASE'
+	}
+}
+
+plugins {
+	id 'org.jetbrains.kotlin.jvm' version '1.2.51'
+	id 'org.jetbrains.kotlin.plugin.spring' version '1.2.51'
+}
+
+apply plugin: 'org.springframework.boot'
+
+group = 'dev.diegoliv'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	compile 'org.springframework.boot:spring-boot-starter-security'
+	compile 'org.springframework.boot:spring-boot-starter-web'
+	compile 'com.fasterxml.jackson.module:jackson-module-kotlin'
+	compile 'org.jetbrains.kotlin:kotlin-reflect'
+	compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+	testCompile 'org.springframework.security:spring-security-test'
+}
+
+compileKotlin {
+	kotlinOptions {
+		freeCompilerArgs = ['-Xjsr305=strict']
+		jvmTarget = '1.8'
+	}
+}
+
+compileTestKotlin {
+	kotlinOptions {
+		freeCompilerArgs = ['-Xjsr305=strict']
+		jvmTarget = '1.8'
+	}
+}
