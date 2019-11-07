@@ -22,18 +22,23 @@ class EmpresaServiceTest {
     @MockBean
     private val empresaRepository: EmpresaRepository? = null
 
-    private val CNPJ = "12345678912345"
+    private val _cnpj = "12345678912345"
 
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        BDDMockito.given(empresaRepository?.findByCnpj(CNPJ)).willReturn(empresa())
-        BDDMockito.given(empresaRepository?.save(empresa())).willReturn(empresa())
+        BDDMockito
+            .given(empresaRepository?.findByCnpj(_cnpj))
+            .willReturn(empresa())
+
+        BDDMockito
+            .given(empresaRepository?.save(empresa()))
+            .willReturn(empresa())
     }
 
     @Test
     fun obterPorCnpj() {
-        val empresa: Empresa? = empresaService?.buscarPorCnpj(CNPJ)
+        val empresa: Empresa? = empresaService?.buscarPorCnpj(_cnpj)
         Assert.assertNotNull(empresa)
     }
 
@@ -43,5 +48,5 @@ class EmpresaServiceTest {
         Assert.assertNotNull(empresa)
     }
 
-    private fun empresa(): Empresa = Empresa("Teste unitário", CNPJ, "1")
+    private fun empresa(): Empresa = Empresa("Teste unitário", _cnpj, "1")
 }

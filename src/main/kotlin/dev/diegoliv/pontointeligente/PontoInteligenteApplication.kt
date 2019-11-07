@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-class PontointeligenteApplication
+class PontoInteligenteApplication
 
 fun main(args: Array<String>) {
-	SpringApplication.run(PontointeligenteApplication::class.java, *args)
+	SpringApplication.run(PontoInteligenteApplication::class.java, *args)
 }

@@ -1,6 +1,6 @@
-package dev.diegoliv.pontointeligente.documents.funcionario
+package dev.diegoliv.pontointeligente.documents.funcionario.enums
 
-enum class Tipo {
+enum class TipoLancamento {
     INICIO_TRABALHO,
     TERMINO_TRABALHO,
     INICIO_ALMOCO,
