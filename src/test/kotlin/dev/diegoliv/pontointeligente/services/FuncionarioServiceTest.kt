@@ -44,8 +44,8 @@ class FuncionarioServiceTest {
             .willReturn(funcionario())
 
         BDDMockito
-                .given(_funcionarioRepository?.findByCpf(cpf))
-                .willReturn(funcionario())
+            .given(_funcionarioRepository?.findByCpf(cpf))
+            .willReturn(funcionario())
     }
 
     @Test
