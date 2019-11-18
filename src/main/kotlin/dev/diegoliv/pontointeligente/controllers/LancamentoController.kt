@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
 import org.springframework.validation.ObjectError
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.text.SimpleDateFormat
 import javax.validation.Valid
 
@@ -24,7 +21,7 @@ class LancamentoController(val _lancamentoService: LancamentoService, val _funci
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-    @Value("\${application.pagination.itemsperpage }")
+    @Value("\${application.pagination.itemsperpage}")
     val itemsPerPage: Int = 15;
 
     @PostMapping
@@ -42,6 +39,16 @@ class LancamentoController(val _lancamentoService: LancamentoService, val _funci
         val lancamento = _lancamentoService.salvar(converterDtoParaLancamento(lancamentoDto))
         response.data = converterLancamentoParaDto(lancamento)
 
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping(value = "/{id}")
+    fun obterPorId(@PathVariable("id") id: String): ResponseEntity<Response<LancamentoDto>> {
+        val response: Response<LancamentoDto> = Response<LancamentoDto>()
+
+        val lancamento: Lancamento? = _lancamentoService.buscarPorId(id)
+
+        response.data = if (lancamento != null) converterLancamentoParaDto(lancamento) else LancamentoDto()
         return ResponseEntity.ok(response)
     }
 

@@ -6,15 +6,17 @@ import dev.diegoliv.pontointeligente.documents.funcionario.enums.Perfil
 import dev.diegoliv.pontointeligente.infrastructure.security.Password
 import dev.diegoliv.pontointeligente.repositories.interfaces.EmpresaRepository
 import dev.diegoliv.pontointeligente.repositories.interfaces.FuncionarioRepository
+import dev.diegoliv.pontointeligente.repositories.interfaces.LancamentoRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-class PontoInteligenteApplication(val _empresaRepository: EmpresaRepository, val _funcionarioRepository: FuncionarioRepository) : CommandLineRunner {
+class PontoInteligenteApplication(val _empresaRepository: EmpresaRepository, val _funcionarioRepository: FuncionarioRepository, val _lancamentoRepository: LancamentoRepository) : CommandLineRunner {
 	override fun run(vararg args: String?) {
 		_empresaRepository.deleteAll()
 		_funcionarioRepository.deleteAll()
+		_lancamentoRepository.deleteAll()
 
 		val empresa: Empresa = Empresa("Empresa de Teste", "14234567801984")
 		_empresaRepository.save(empresa)
