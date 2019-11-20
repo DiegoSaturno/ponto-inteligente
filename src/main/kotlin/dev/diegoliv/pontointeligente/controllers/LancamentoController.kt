@@ -17,12 +17,9 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/lancamentos")
-class LancamentoController(val _lancamentoService: LancamentoService, val _funcionarioService: FuncionarioService) {
+class LancamentoController(val _lancamentoService: LancamentoService, val _funcionarioService: FuncionarioService): BaseController() {
 
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-    @Value("\${application.pagination.itemsperpage}")
-    val itemsPerPage: Int = 15;
 
     @PostMapping
     fun adicionar(@Valid @RequestBody lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>>  {
@@ -49,7 +46,13 @@ class LancamentoController(val _lancamentoService: LancamentoService, val _funci
         val lancamento: Lancamento? = _lancamentoService.buscarPorId(id)
 
         response.data = if (lancamento != null) converterLancamentoParaDto(lancamento) else LancamentoDto()
+
         return ResponseEntity.ok(response)
+    }
+
+    @PutMapping(value = "/{id}")
+    fun atualizar(@PathVariable id: String) {
+
     }
 
     private fun validarFuncionario(lancamentoDto: LancamentoDto, result: BindingResult) {
@@ -65,8 +68,7 @@ class LancamentoController(val _lancamentoService: LancamentoService, val _funci
     }
 
     private fun converterDtoParaLancamento(lancamentoDto: LancamentoDto): Lancamento {
-        return Lancamento(dateFormat.parse(lancamentoDto.data), TipoLancamento.valueOf(lancamentoDto.tipo!!), lancamentoDto.idFuncionario!!,
-                lancamentoDto.descricao, lancamentoDto.localizacao, lancamentoDto.id)
+        return Lancamento(dateFormat.parse(lancamentoDto.data), TipoLancamento.valueOf(lancamentoDto.tipo!!), lancamentoDto.idFuncionario!!, lancamentoDto.descricao, lancamentoDto.localizacao, lancamentoDto.id)
     }
 
     private fun converterLancamentoParaDto(lancamento: Lancamento): LancamentoDto =
