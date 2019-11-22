@@ -19,10 +19,44 @@ import javax.validation.Valid
 @RequestMapping("/api/lancamentos")
 class LancamentoController(val _lancamentoService: LancamentoService, val _funcionarioService: FuncionarioService): BaseController() {
 
-
-
     @PostMapping
     fun adicionar(@Valid @RequestBody lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>>  {
+        return salvarLancamento(lancamentoDto, result)
+    }
+
+    @GetMapping(value = "/{id}")
+    fun obterPorId(@PathVariable("id") id: String): ResponseEntity<Response<LancamentoDto>> {
+        val response: Response<LancamentoDto> = Response<LancamentoDto>()
+
+        val lancamento: Lancamento? = _lancamentoService.buscarPorId(id)
+
+        response.data = if (lancamento != null) converterLancamentoParaDto(lancamento) else LancamentoDto()
+        return ResponseEntity.ok(response)
+    }
+
+    @PutMapping(value = "/{id}")
+    fun atualizar(@PathVariable id: String, @Valid @RequestBody lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>> {
+        lancamentoDto.id = id;
+
+        return salvarLancamento(lancamentoDto, result)
+    }
+
+    @DeleteMapping(value = "/{id}")
+    fun remover(@PathVariable id: String): ResponseEntity<Response<String>> {
+        val response: Response<String> = Response<String>()
+        val lancamento = _lancamentoService.buscarPorId(id)
+
+        if (lancamento == null) {
+            response.errors.add("Lançamento não encontrado.")
+
+            return ResponseEntity.badRequest().body(response)
+        }
+
+        _lancamentoService.remover(id)
+        return ResponseEntity.ok(response)
+    }
+
+    private fun salvarLancamento(lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>> {
         val response: Response<LancamentoDto> = Response<LancamentoDto>()
         validarFuncionario(lancamentoDto, result)
 
@@ -37,22 +71,6 @@ class LancamentoController(val _lancamentoService: LancamentoService, val _funci
         response.data = converterLancamentoParaDto(lancamento)
 
         return ResponseEntity.ok(response)
-    }
-
-    @GetMapping(value = "/{id}")
-    fun obterPorId(@PathVariable("id") id: String): ResponseEntity<Response<LancamentoDto>> {
-        val response: Response<LancamentoDto> = Response<LancamentoDto>()
-
-        val lancamento: Lancamento? = _lancamentoService.buscarPorId(id)
-
-        response.data = if (lancamento != null) converterLancamentoParaDto(lancamento) else LancamentoDto()
-
-        return ResponseEntity.ok(response)
-    }
-
-    @PutMapping(value = "/{id}")
-    fun atualizar(@PathVariable id: String) {
-
     }
 
     private fun validarFuncionario(lancamentoDto: LancamentoDto, result: BindingResult) {
