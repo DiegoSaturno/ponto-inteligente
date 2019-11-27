@@ -9,6 +9,7 @@ import dev.diegoliv.pontointeligente.documents.funcionario.enums.TipoLancamento
 import dev.diegoliv.pontointeligente.infrastructure.security.Password
 import dev.diegoliv.pontointeligente.services.FuncionarioService
 import dev.diegoliv.pontointeligente.services.LancamentoService
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito
@@ -44,7 +45,7 @@ class LancamentoControllerTest {
     @MockBean
     private val _funcionarioService: FuncionarioService? = null
 
-    private val urlBase: String = "/api/lancamentos"
+    private val urlBase: String = "/api/lancamentos/"
     private val idFuncionario: String = "1"
     private val idLancamento: String = "1"
     private val tipo: String = TipoLancamento.INICIO_TRABALHO.name
@@ -52,37 +53,96 @@ class LancamentoControllerTest {
 
     private val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-    private val lancamento: Lancamento = Lancamento(data, TipoLancamento.valueOf(tipo), idFuncionario, "Descrição", "1.243,3.567", idLancamento)
-    private val lancamentoDto: LancamentoDto = LancamentoDto(dateFormat.format(data), TipoLancamento.INICIO_TRABALHO.toString(), idFuncionario, "Descrição", "1.243,3.567", idLancamento)
-    private val lancamentoDtoSemId: LancamentoDto = LancamentoDto(dateFormat.format(data), TipoLancamento.INICIO_TRABALHO.toString(), idFuncionario, "Descrição", "1.243,3.567")
-
-
     @Test
+//    @Ignore
     @Throws(Exception::class)
     @WithMockUser
     fun cadastrarLancamento() {
+        val lancamento = obterDadosLancamento()
+
         BDDMockito
             .given<Funcionario>(_funcionarioService?.buscarPorId(idFuncionario))
             .willReturn(funcionario())
 
+
         BDDMockito
-            .given<Lancamento>(_lancamentoService?.salvar(lancamento))
+            .given(_lancamentoService?.salvar(obterDadosLancamento()))
             .willReturn(lancamento)
 
         mvc!!
             .perform(
-                MockMvcRequestBuilders.post(urlBase)
+                MockMvcRequestBuilders
+                    .post(urlBase)
                     .content(obterJsonRequest())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk)
-                .andExpect(jsonPath("$.data.tipo").value(tipo))
-                .andExpect(jsonPath("$.data.data").value(dateFormat.format(data)))
-                .andExpect(jsonPath("$.data.idFuncionario").value(idFuncionario))
-                .andExpect(jsonPath("$.errors").isEmpty)
+            .andExpect(jsonPath("$.data.tipo").value(tipo))
+            .andExpect(jsonPath("$.data.data").value(dateFormat.format(data)))
+            .andExpect(jsonPath("$.data.idFuncionario").value(idFuncionario))
+            .andExpect(jsonPath("$.errors").isEmpty)
     }
 
-    private fun obterJsonRequest(): String = ObjectMapper().writeValueAsString(lancamentoDtoSemId)
+    @Test
+    @Throws(Exception::class)
+    @WithMockUser
+    fun cadastrarLancamentoComFuncionarioInexistente() {
+        BDDMockito
+            .given<Funcionario>(_funcionarioService?.buscarPorId(idFuncionario))
+            .willReturn(null)
+
+        mvc!!
+            .perform(
+                MockMvcRequestBuilders
+                    .post(urlBase)
+                    .content(obterJsonRequest())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.errors").value("Funcionário não encontrado."))
+            .andExpect(jsonPath("$.data").isEmpty)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    @WithMockUser
+    fun removerLancamentoExistente() {
+        BDDMockito
+            .given<Lancamento>(_lancamentoService?.buscarPorId(idLancamento))
+            .willReturn(obterDadosLancamento())
+
+        mvc!!
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(urlBase + idLancamento)
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    @WithMockUser
+    fun removerLancamentoInexistente() {
+        BDDMockito
+            .given<Lancamento>(_lancamentoService?.buscarPorId(idLancamento))
+            .willReturn(null)
+
+        mvc!!
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(urlBase + idLancamento)
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.errors").value("Lançamento não encontrado."))
+    }
+
+    private fun obterDadosLancamento(): Lancamento = Lancamento(data, TipoLancamento.valueOf(tipo), idFuncionario, "Descrição", "1.243,4.345", idLancamento)
+
+    private fun obterJsonRequest(): String = ObjectMapper().writeValueAsString(LancamentoDto(dateFormat.format(data), tipo, "Descrição", "1.243,4.345", idFuncionario, idLancamento))
+
     private fun funcionario(): Funcionario = Funcionario("Nome", "email@email.com", Password().hashPassword("1234"), "12398745688", Perfil.ROLE_USUARIO, idFuncionario)
 }

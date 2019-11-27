@@ -27,6 +27,7 @@ class LancamentoServiceTest {
     private val _lancamentoRepository: LancamentoRepository? = null
 
     private val id: String = "1"
+    private val lancamentoMock: Lancamento = Lancamento(Date(), TipoLancamento.INICIO_TRABALHO, id)
 
     @Before
     @Throws(Exception::class)
@@ -37,11 +38,11 @@ class LancamentoServiceTest {
 
         BDDMockito
             .given(_lancamentoRepository?.findOne(id))
-            .willReturn(lancamento())
+            .willReturn(lancamentoMock)
 
         BDDMockito
             .given(_lancamentoRepository?.save(BDDMockito.any(Lancamento::class.java)))
-            .willReturn(lancamento())
+            .willReturn(lancamentoMock)
     }
 
     @Test
@@ -58,10 +59,8 @@ class LancamentoServiceTest {
 
     @Test
     fun salvarLancamento() {
-        val lancamento: Lancamento? = _lancamentoService?.salvar(lancamento())
+        val lancamento: Lancamento? = _lancamentoService?.salvar(lancamentoMock)
         Assert.assertNotNull(lancamento)
-        Assert.assertEquals(lancamento(), lancamento)
+        Assert.assertEquals(lancamento, lancamentoMock)
     }
-
-    private fun lancamento(): Lancamento = Lancamento(Date(), TipoLancamento.INICIO_TRABALHO, id)
 }

@@ -24,9 +24,9 @@ class LancamentoController(val _lancamentoService: LancamentoService, val _funci
         return salvarLancamento(lancamentoDto, result)
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = ["/{id}"])
     fun obterPorId(@PathVariable("id") id: String): ResponseEntity<Response<LancamentoDto>> {
-        val response: Response<LancamentoDto> = Response<LancamentoDto>()
+        val response: Response<LancamentoDto> = Response()
 
         val lancamento: Lancamento? = _lancamentoService.buscarPorId(id)
 
@@ -34,16 +34,16 @@ class LancamentoController(val _lancamentoService: LancamentoService, val _funci
         return ResponseEntity.ok(response)
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = ["/{id}"])
     fun atualizar(@PathVariable id: String, @Valid @RequestBody lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>> {
         lancamentoDto.id = id;
 
         return salvarLancamento(lancamentoDto, result)
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = ["/{id}"])
     fun remover(@PathVariable id: String): ResponseEntity<Response<String>> {
-        val response: Response<String> = Response<String>()
+        val response: Response<String> = Response()
         val lancamento = _lancamentoService.buscarPorId(id)
 
         if (lancamento == null) {
@@ -57,7 +57,7 @@ class LancamentoController(val _lancamentoService: LancamentoService, val _funci
     }
 
     private fun salvarLancamento(lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>> {
-        val response: Response<LancamentoDto> = Response<LancamentoDto>()
+        val response: Response<LancamentoDto> = Response()
         validarFuncionario(lancamentoDto, result)
 
         if (result.hasErrors()) {
