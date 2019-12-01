@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty
 import org.hibernate.validator.constraints.br.CNPJ
 import org.hibernate.validator.constraints.br.CPF
 
-data class CadastroPFDto(
+data class PessoaJuridicaDto(
     @get:NotEmpty(message = "O nome é obrigatório.")
     @get:Length(min = 3, message = "O campo nome deve ter mais de 3 caracteres.")
     val nome: String = "",
@@ -27,10 +27,9 @@ data class CadastroPFDto(
     @get:CNPJ(message = "O CNPJ informado é inválido.")
     val cnpj: String = "",
 
-    val idEmpresa: String = "",
+    @get:NotEmpty(message = "O campo Razão Social é obrigatório")
+    @get:Length(min = 5, message = "Email deve conter mais de 5 caracteres.")
+    val razaoSocial: String = "",
 
-    val valorHora: String? = null,
-    val cargaHoraria: String? = null,
-    val quantidadeHorasAlmoco: String? = null,
     val id: String? = null
 )

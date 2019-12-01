@@ -24,6 +24,9 @@ class FuncionarioServiceTest {
     @Autowired
     private val _funcionarioService: FuncionarioService? = null
 
+    @Autowired
+    private lateinit var _password: Password
+
     private val email: String = "email@teste.com"
     private val cpf: String = "12345678900"
     private val id: String = "1"
@@ -73,5 +76,5 @@ class FuncionarioServiceTest {
     }
 
     private fun funcionario(): Funcionario =
-        Funcionario("Funcionário de Teste", email, Password().hashPassword("123456"), cpf, Perfil.ROLE_USUARIO, id)
+        Funcionario("Funcionário de Teste", email, _password.hashPassword("123456"), cpf, Perfil.ROLE_USUARIO, id)
 }
