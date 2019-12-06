@@ -19,76 +19,76 @@ import javax.validation.Valid
 @RequestMapping("/api/lancamentos")
 class LancamentoController(val _lancamentoService: LancamentoService, val _funcionarioService: FuncionarioService): BaseController() {
 
-    @PostMapping
-    fun adicionar(@Valid @RequestBody lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>>  {
-        return salvarLancamento(lancamentoDto, result)
-    }
+	@PostMapping
+	fun adicionar(@Valid @RequestBody lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>>  {
+		return salvarLancamento(lancamentoDto, result)
+	}
 
-    @GetMapping(value = ["/{id}"])
-    fun obterPorId(@PathVariable("id") id: String): ResponseEntity<Response<LancamentoDto>> {
-        val response: Response<LancamentoDto> = Response()
+	@GetMapping(value = ["/{id}"])
+	fun obterPorId(@PathVariable("id") id: String): ResponseEntity<Response<LancamentoDto>> {
+		val response: Response<LancamentoDto> = Response()
 
-        val lancamento: Lancamento? = _lancamentoService.buscarPorId(id)
+		val lancamento: Lancamento? = _lancamentoService.buscarPorId(id)
 
-        response.data = if (lancamento != null) converterLancamentoParaDto(lancamento) else LancamentoDto()
-        return ResponseEntity.ok(response)
-    }
+		response.data = if (lancamento != null) converterLancamentoParaDto(lancamento) else LancamentoDto()
+		return ResponseEntity.ok(response)
+	}
 
-    @PutMapping(value = ["/{id}"])
-    fun atualizar(@PathVariable id: String, @Valid @RequestBody lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>> {
-        lancamentoDto.id = id;
+	@PutMapping(value = ["/{id}"])
+	fun atualizar(@PathVariable id: String, @Valid @RequestBody lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>> {
+		lancamentoDto.id = id;
 
-        return salvarLancamento(lancamentoDto, result)
-    }
+		return salvarLancamento(lancamentoDto, result)
+	}
 
-    @DeleteMapping(value = ["/{id}"])
-    fun remover(@PathVariable id: String): ResponseEntity<Response<String>> {
-        val response: Response<String> = Response()
-        val lancamento = _lancamentoService.buscarPorId(id)
+	@DeleteMapping(value = ["/{id}"])
+	fun remover(@PathVariable id: String): ResponseEntity<Response<String>> {
+		val response: Response<String> = Response()
+		val lancamento = _lancamentoService.buscarPorId(id)
 
-        if (lancamento == null) {
-            response.errors.add("Lançamento não encontrado.")
+		if (lancamento == null) {
+			response.errors.add("Lançamento não encontrado.")
 
-            return ResponseEntity.badRequest().body(response)
-        }
+			return ResponseEntity.badRequest().body(response)
+		}
 
-        _lancamentoService.remover(id)
-        return ResponseEntity.ok(response)
-    }
+		_lancamentoService.remover(id)
+		return ResponseEntity.ok(response)
+	}
 
-    private fun salvarLancamento(lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>> {
-        val response: Response<LancamentoDto> = Response()
-        validarFuncionario(lancamentoDto, result)
+	private fun salvarLancamento(lancamentoDto: LancamentoDto, result: BindingResult): ResponseEntity<Response<LancamentoDto>> {
+		val response: Response<LancamentoDto> = Response()
+		validarFuncionario(lancamentoDto, result)
 
-        if (result.hasErrors()) {
-            for (error in result.allErrors)
-                response.errors.add(error.defaultMessage)
+		if (result.hasErrors()) {
+			for (error in result.allErrors)
+				response.errors.add(error.defaultMessage)
 
-            return ResponseEntity.badRequest().body(response)
-        }
+			return ResponseEntity.badRequest().body(response)
+		}
 
-        val lancamento = _lancamentoService.salvar(converterDtoParaLancamento(lancamentoDto))
-        response.data = converterLancamentoParaDto(lancamento)
+		val lancamento = _lancamentoService.salvar(converterDtoParaLancamento(lancamentoDto))
+		response.data = converterLancamentoParaDto(lancamento)
 
-        return ResponseEntity.ok(response)
-    }
+		return ResponseEntity.ok(response)
+	}
 
-    private fun validarFuncionario(lancamentoDto: LancamentoDto, result: BindingResult) {
-        if (lancamentoDto.idFuncionario != null) {
-            val funcionario: Funcionario? = _funcionarioService.buscarPorId(lancamentoDto.idFuncionario)
+	private fun validarFuncionario(lancamentoDto: LancamentoDto, result: BindingResult) {
+		if (lancamentoDto.idFuncionario != null) {
+			val funcionario: Funcionario? = _funcionarioService.buscarPorId(lancamentoDto.idFuncionario)
 
-            if (funcionario == null) {
-                result.addError(ObjectError("funcionario", "Funcionário não encontrado."))
-            }
-        } else {
-            result.addError(ObjectError("funcionario", "Funcionário não informado."))
-        }
-    }
+			if (funcionario == null) {
+				result.addError(ObjectError("funcionario", "Funcionário não encontrado."))
+			}
+		} else {
+			result.addError(ObjectError("funcionario", "Funcionário não informado."))
+		}
+	}
 
-    private fun converterDtoParaLancamento(lancamentoDto: LancamentoDto): Lancamento {
-        return Lancamento(dateFormat.parse(lancamentoDto.data), TipoLancamento.valueOf(lancamentoDto.tipo!!), lancamentoDto.idFuncionario!!, lancamentoDto.descricao, lancamentoDto.localizacao, lancamentoDto.id)
-    }
+	private fun converterDtoParaLancamento(lancamentoDto: LancamentoDto): Lancamento {
+		return Lancamento(dateFormat.parse(lancamentoDto.data), TipoLancamento.valueOf(lancamentoDto.tipo!!), lancamentoDto.idFuncionario!!, lancamentoDto.descricao, lancamentoDto.localizacao, lancamentoDto.id)
+	}
 
-    private fun converterLancamentoParaDto(lancamento: Lancamento): LancamentoDto =
-            LancamentoDto(dateFormat.format(lancamento.data), lancamento.tipoLancamento.toString(), lancamento.descricao, lancamento.localizacao, lancamento.idFuncionario, lancamento.id)
+	private fun converterLancamentoParaDto(lancamento: Lancamento): LancamentoDto =
+		LancamentoDto(dateFormat.format(lancamento.data), lancamento.tipoLancamento.toString(), lancamento.descricao, lancamento.localizacao, lancamento.idFuncionario, lancamento.id)
 }
