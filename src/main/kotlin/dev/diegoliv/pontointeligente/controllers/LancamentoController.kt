@@ -9,6 +9,7 @@ import dev.diegoliv.pontointeligente.services.FuncionarioService
 import dev.diegoliv.pontointeligente.services.LancamentoService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.BindingResult
 import org.springframework.validation.ObjectError
 import org.springframework.web.bind.annotation.*
@@ -42,6 +43,7 @@ class LancamentoController(val _lancamentoService: LancamentoService, val _funci
 	}
 
 	@DeleteMapping(value = ["/{id}"])
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	fun remover(@PathVariable id: String): ResponseEntity<Response<String>> {
 		val response: Response<String> = Response()
 		val lancamento = _lancamentoService.buscarPorId(id)

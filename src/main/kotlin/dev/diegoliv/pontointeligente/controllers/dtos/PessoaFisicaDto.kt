@@ -24,7 +24,6 @@ data class PessoaFisicaDto(
     val cpf: String = "",
 
     @get:NotEmpty(message = "O campo CNPJ é obrigatório")
-    @get:CNPJ(message = "O CNPJ informado é inválido.")
     val cnpj: String = "",
 
     val idEmpresa: String = "",

@@ -107,7 +107,7 @@ class LancamentoControllerTest {
 
     @Test
     @Throws(Exception::class)
-    @WithMockUser
+    @WithMockUser(username = "admin@admin.com", roles = ["ADMIN"])
     fun removerLancamentoExistente() {
         BDDMockito
             .given<Lancamento>(_lancamentoService?.buscarPorId(idLancamento))

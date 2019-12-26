@@ -12,26 +12,8 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-class PontoInteligenteApplication(val _empresaRepository: EmpresaRepository, val _funcionarioRepository: FuncionarioRepository, val _lancamentoRepository: LancamentoRepository) : CommandLineRunner {
-	override fun run(vararg args: String?) {
-		_empresaRepository.deleteAll()
-		_funcionarioRepository.deleteAll()
-		_lancamentoRepository.deleteAll()
-
-		val empresa: Empresa = Empresa("Empresa de Teste", "14234567801984")
-		_empresaRepository.save(empresa)
-
-		val admin: Funcionario = Funcionario("Admin", "admin@admin.com", Password().hashPassword("123456"), "12345678900", Perfil.ROLE_ADMIN, empresa.id!!)
-		_funcionarioRepository.save(admin)
-
-		val funcionario: Funcionario = Funcionario("Funcionario Comum", "fun@fun.com", Password().hashPassword("123456"), "15864782011", Perfil.ROLE_USUARIO, empresa.id)
-		_funcionarioRepository.save(funcionario)
-
-		println(empresa.toString())
-		println(admin.toString())
+class PontoInteligenteApplication {
+	fun main(args: Array<String>) {
+		SpringApplication.run(PontoInteligenteApplication::class.java, *args)
 	}
-}
-
-fun main(args: Array<String>) {
-	SpringApplication.run(PontoInteligenteApplication::class.java, *args)
 }
