@@ -13,6 +13,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito
+import org.mockito.Mockito
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -66,7 +67,7 @@ class LancamentoControllerTest {
 
 
         BDDMockito
-            .given(_lancamentoService?.salvar(obterDadosLancamento()))
+            .given(_lancamentoService?.salvar(Mockito.any(Lancamento::class.java)))
             .willReturn(lancamento)
 
         mvc!!
